@@ -49,11 +49,20 @@ const initialModel: Model = {
 
 // ! Fast refresh only works when a file has exports. Move your component(s) to a separate file.
 // eslint-disable-next-line
+const ModelView = (propsModel: Model): JSX.Element => {
+  return (
+    <div className={`mockup-code bg-success text-primary-content`}>
+      <pre className={`ml-[2ch] before:!mr-0`}>
+        <code className={``}>{JSON.stringify(propsModel, undefined, 2)}</code>
+      </pre>
+    </div>
+  );
+};
+
+// ! Fast refresh only works when a file has exports. Move your component(s) to a separate file.
+// eslint-disable-next-line
 const ParamEditor = (props: Props): JSX.Element => {
-  const getModel = () => {
-    const result = document.getElementById('result')!;
-    result.textContent = JSON.stringify(props.model, undefined, 2);
-  };
+  const [isShown, setIsShown] = useState(false);
 
   const addNew = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +110,7 @@ const ParamEditor = (props: Props): JSX.Element => {
               type="button"
               onClick={() => props.deleteParam(param.id)}
             >
-              <HiMinusCircle className={`text-error h-6 w-6`} />
+              <HiMinusCircle className={`h-6 w-6 text-error`} />
             </button>
           </div>
         ))}
@@ -141,7 +150,7 @@ const ParamEditor = (props: Props): JSX.Element => {
             ))}
           </select>
           <button className="btn btn-outline btn-primary p-3">
-            <HiPlusCircle className={`text-primary h-6 w-6`} />
+            <HiPlusCircle className={`h-6 w-6 text-primary`} />
           </button>
         </div>
       </form>
@@ -181,14 +190,24 @@ const ParamEditor = (props: Props): JSX.Element => {
           ))}
         </ul>
       </div>
-      <button
-        className="btn btn-secondary"
-        type="button"
-        onClick={getModel}
-      >
-        Show Current Model as JSON
-      </button>
-      <pre id="result"></pre>
+      {isShown ? (
+        <button
+          className="btn btn-error"
+          type="button"
+          onClick={() => setIsShown(!isShown)}
+        >
+          Close Current Model
+        </button>
+      ) : (
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={() => setIsShown(!isShown)}
+        >
+          Show Current Model
+        </button>
+      )}
+      {isShown ? <ModelView {...props.model} /> : null}
     </div>
   );
 };
